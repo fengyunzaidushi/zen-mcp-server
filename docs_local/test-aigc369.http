@@ -1,0 +1,203 @@
+### AIGC369 API 测试文件
+### 用于验证AIGC369 API的连接和功能
+
+@baseUrl = https://api.aigc369.com/v1
+@apiKey = sk-nTnL3K8UoIT98eImMq4aaPDGE3y9qE36xd4mePthb2cG5I5v
+
+### 1. 获取可用模型列表
+GET {{baseUrl}}/models HTTP/1.1
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+### 2. 测试GPT-4o聊天完成
+POST {{baseUrl}}/chat/completions HTTP/1.1
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "gpt-4o",
+  "messages": [
+    {
+      "role": "user", 
+      "content": "你好！请用中文简单介绍一下你自己，并告诉我你是通过什么API提供服务的。"
+    }
+  ],
+  "max_tokens": 150,
+  "temperature": 0.7,
+  "stream": false
+}
+
+### 3. 测试Claude 3.5 Sonnet
+POST {{baseUrl}}/chat/completions HTTP/1.1
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "claude-3-5-sonnet-latest",
+  "messages": [
+    {
+      "role": "user", 
+      "content": "请用Python写一个简单的计算器函数，支持加减乘除四则运算。"
+    }
+  ],
+  "max_tokens": 500,
+  "temperature": 0.3
+}
+
+### 4. 测试Gemini 2.0 Flash
+POST {{baseUrl}}/chat/completions HTTP/1.1
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "gemini-2.0-flash",
+  "messages": [
+    {
+      "role": "user", 
+      "content": "解释一下什么是机器学习，用通俗易懂的语言。"
+    }
+  ],
+  "max_tokens": 300,
+  "temperature": 0.5
+}
+
+### 5. 测试GPT-4o Mini (经济版本)
+POST {{baseUrl}}/chat/completions HTTP/1.1
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "gpt-4o-mini",
+  "messages": [
+    {
+      "role": "user", 
+      "content": "帮我生成一个待办事项列表的JSON格式示例，包含5个任务。"
+    }
+  ],
+  "max_tokens": 200,
+  "temperature": 0.4
+}
+
+### 6. 测试O1推理模型 (如果可用)
+POST {{baseUrl}}/chat/completions HTTP/1.1
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "o1-mini",
+  "messages": [
+    {
+      "role": "user", 
+      "content": "请解这个数学问题：如果一个正方形的对角线长度是10厘米，那么这个正方形的面积是多少？请详细说明解题步骤。"
+    }
+  ],
+  "max_tokens": 1000
+}
+
+### 7. 测试函数调用功能 (GPT-4o)
+POST {{baseUrl}}/chat/completions HTTP/1.1
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "gpt-4o",
+  "messages": [
+    {
+      "role": "user", 
+      "content": "今天北京的天气怎么样？"
+    }
+  ],
+  "functions": [
+    {
+      "name": "get_weather",
+      "description": "获取指定城市的天气信息",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "城市名称"
+          }
+        },
+        "required": ["city"]
+      }
+    }
+  ],
+  "function_call": "auto",
+  "max_tokens": 150
+}
+
+### 8. 测试流式响应
+POST {{baseUrl}}/chat/completions HTTP/1.1
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "gpt-4o-mini",
+  "messages": [
+    {
+      "role": "user", 
+      "content": "请写一首关于春天的短诗。"
+    }
+  ],
+  "max_tokens": 200,
+  "temperature": 0.8,
+  "stream": true
+}
+
+### 9. 测试多轮对话
+POST {{baseUrl}}/chat/completions HTTP/1.1
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "claude-3-5-sonnet-latest",
+  "messages": [
+    {
+      "role": "user", 
+      "content": "我想学习Python编程，应该从哪里开始？"
+    },
+    {
+      "role": "assistant",
+      "content": "学习Python编程是个很好的选择！我建议你从以下几个步骤开始：\n\n1. **安装Python环境**\n2. **学习基本语法**\n3. **练习编程题目**\n4. **做实际项目**\n\n你目前有编程基础吗？"
+    },
+    {
+      "role": "user", 
+      "content": "我完全是零基础，推荐一些适合初学者的资源吧。"
+    }
+  ],
+  "max_tokens": 400,
+  "temperature": 0.6
+}
+
+### 10. 错误处理测试 - 无效模型
+POST {{baseUrl}}/chat/completions HTTP/1.1
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "invalid-model-name",
+  "messages": [
+    {
+      "role": "user", 
+      "content": "这应该会返回错误"
+    }
+  ],
+  "max_tokens": 50
+}
+
+### 11. 测试API限制 - 超长输入
+POST {{baseUrl}}/chat/completions HTTP/1.1
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "gpt-3.5-turbo",
+  "messages": [
+    {
+      "role": "user", 
+      "content": "请重复以下文字1000遍：Hello World! "
+    }
+  ],
+  "max_tokens": 50
+} 

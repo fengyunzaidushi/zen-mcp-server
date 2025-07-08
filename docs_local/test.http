@@ -1,0 +1,4 @@
+# 获取模型列表
+GET /v1/models HTTP/1.1
+Host: api.aigc369.com
+Authorization: Bearer sk-nTnL3K8UoIT98eImMq4aaPDGE3y9qE36xd4mePthb2cG5I5v
